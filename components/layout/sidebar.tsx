@@ -1,9 +1,10 @@
 "use client";
 
+import { cn } from "@/lib/utils";
+import { LayoutDashboard, ShoppingBag, Users } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ShoppingBag, Users, LayoutDashboard } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { ThemeToggle } from "./theme-toggle";
 
 const links = [
   { href: "/pedidos", label: "Pedidos", icon: ShoppingBag },
@@ -17,7 +18,7 @@ export function Sidebar() {
     <aside className="flex flex-col w-60 h-screen border-r bg-sidebar px-3 py-4 gap-1 shrink-0 overflow-y-auto">
       <div className="flex items-center gap-2 px-3 py-2 mb-4">
         <LayoutDashboard className="size-5 text-sidebar-primary" />
-        <span className="font-semibold text-sidebar-foreground">Bia Sell</span>
+        <span className="font-semibold text-sidebar-foreground">Bia AI</span>
       </div>
 
       <nav className="flex flex-col gap-1">
@@ -37,6 +38,11 @@ export function Sidebar() {
           </Link>
         ))}
       </nav>
+
+      <div className="mt-auto flex items-center justify-between px-3 py-2">
+        <span className="text-xs text-sidebar-foreground/50">Tema</span>
+        <ThemeToggle />
+      </div>
     </aside>
   );
 }

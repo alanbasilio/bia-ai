@@ -1,4 +1,4 @@
-# Bia Sell — Painel de Gestão de Pedidos
+# Bia AI — Painel de Gestão de Pedidos
 
 Painel web para gerenciamento de pedidos e clientes de uma loja de acessórios, migrado de planilha Excel para banco de dados estruturado.
 

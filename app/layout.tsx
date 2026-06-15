@@ -1,8 +1,8 @@
+import { Sidebar } from "@/components/layout/sidebar";
+import { Providers } from "@/components/providers";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { Sidebar } from "@/components/layout/sidebar";
-import { Providers } from "@/components/providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Bia Sell — Gestão de Pedidos",
+  title: "Bia AI — Gestão de Pedidos",
   description: "Painel de gestão de pedidos e clientes",
 };
 
