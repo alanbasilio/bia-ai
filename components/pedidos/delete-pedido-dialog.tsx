@@ -1,15 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { ResponsiveDialog } from "@/components/ui/responsive-dialog";
 import { Button } from "@/components/ui/button";
 import { useDeletePedido } from "@/hooks/use-pedidos";
 
@@ -28,29 +20,31 @@ export function DeletePedidoDialog({
   const del = useDeletePedido();
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent className="max-w-sm">
-        <DialogHeader>
-          <DialogTitle>Excluir pedido</DialogTitle>
-          <DialogDescription>
-            Tem certeza que deseja excluir o pedido de{" "}
-            <strong>{produto}</strong>? Essa ação não pode ser desfeita.
-          </DialogDescription>
-        </DialogHeader>
-        <DialogFooter className="gap-2">
-          <Button variant="outline" onClick={() => setOpen(false)}>
-            Cancelar
-          </Button>
-          <Button
-            variant="destructive"
-            disabled={del.isPending}
-            onClick={() => del.mutate(id, { onSuccess: () => setOpen(false) })}
-          >
-            {del.isPending ? "Excluindo..." : "Excluir"}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+    <ResponsiveDialog
+      open={open}
+      onOpenChange={setOpen}
+      trigger={trigger}
+      title="Excluir pedido"
+      description={`Tem certeza que deseja excluir o pedido de "${produto}"? Essa ação não pode ser desfeita.`}
+      className="max-w-sm"
+    >
+      <div className="flex gap-2 pt-2 pb-1">
+        <Button
+          variant="outline"
+          className="flex-1"
+          onClick={() => setOpen(false)}
+        >
+          Cancelar
+        </Button>
+        <Button
+          variant="destructive"
+          className="flex-1"
+          disabled={del.isPending}
+          onClick={() => del.mutate(id, { onSuccess: () => setOpen(false) })}
+        >
+          {del.isPending ? "Excluindo..." : "Excluir"}
+        </Button>
+      </div>
+    </ResponsiveDialog>
   );
 }

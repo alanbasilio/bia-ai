@@ -1,13 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { ResponsiveDialog } from "@/components/ui/responsive-dialog";
 import { ClienteForm } from "./cliente-form";
 import { useCreateCliente, useUpdateCliente } from "@/hooks/use-clientes";
 import type { Cliente, ClienteInput } from "@/lib/types";
@@ -35,20 +29,18 @@ export function ClienteDialog({ cliente, trigger }: ClienteDialogProps) {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
-          <DialogTitle className="font-heading text-xl font-semibold tracking-wide">
-            {cliente ? "Editar Cliente" : "Novo Cliente"}
-          </DialogTitle>
-        </DialogHeader>
-        <ClienteForm
-          defaultValues={cliente}
-          onSubmit={handleSubmit}
-          isPending={isPending}
-        />
-      </DialogContent>
-    </Dialog>
+    <ResponsiveDialog
+      open={open}
+      onOpenChange={setOpen}
+      trigger={trigger}
+      title={cliente ? "Editar Cliente" : "Novo Cliente"}
+      className="max-w-md"
+    >
+      <ClienteForm
+        defaultValues={cliente}
+        onSubmit={handleSubmit}
+        isPending={isPending}
+      />
+    </ResponsiveDialog>
   );
 }

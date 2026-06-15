@@ -1,13 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { ResponsiveDialog } from "@/components/ui/responsive-dialog";
 import { PedidoForm } from "./pedido-form";
 import { useCreatePedido, useUpdatePedido } from "@/hooks/use-pedidos";
 import type { Pedido, PedidoInput } from "@/lib/types";
@@ -35,20 +29,18 @@ export function PedidoDialog({ pedido, trigger }: PedidoDialogProps) {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="font-heading text-xl font-semibold tracking-wide">
-            {pedido ? "Editar Pedido" : "Novo Pedido"}
-          </DialogTitle>
-        </DialogHeader>
-        <PedidoForm
-          defaultValues={pedido}
-          onSubmit={handleSubmit}
-          isPending={isPending}
-        />
-      </DialogContent>
-    </Dialog>
+    <ResponsiveDialog
+      open={open}
+      onOpenChange={setOpen}
+      trigger={trigger}
+      title={pedido ? "Editar Pedido" : "Novo Pedido"}
+      className="max-w-lg"
+    >
+      <PedidoForm
+        defaultValues={pedido}
+        onSubmit={handleSubmit}
+        isPending={isPending}
+      />
+    </ResponsiveDialog>
   );
 }

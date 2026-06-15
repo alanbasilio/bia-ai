@@ -23,7 +23,7 @@ export function Sidebar() {
   }
 
   return (
-    <aside className="flex flex-col w-56 h-screen bg-sidebar shrink-0 overflow-y-auto">
+    <aside className="hidden md:flex flex-col w-56 h-screen bg-sidebar shrink-0 overflow-y-auto">
       <div className="px-5 py-5 border-b border-sidebar-border">
         <div className="flex items-center gap-3">
           <div className="flex items-center justify-center w-8 h-8 rounded bg-sidebar-primary text-sidebar-primary-foreground shrink-0">
