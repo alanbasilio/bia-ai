@@ -5,12 +5,12 @@ const statusConfig: Record<
   StatusPedido,
   {
     label: string;
-    variant: "default" | "secondary" | "destructive" | "outline";
+    variant: "success" | "warning" | "info" | "destructive";
   }
 > = {
-  pago: { label: "Pago", variant: "default" },
-  enviado: { label: "Enviado", variant: "secondary" },
-  pendente: { label: "Pendente", variant: "outline" },
+  pago: { label: "Pago", variant: "success" },
+  enviado: { label: "Enviado", variant: "info" },
+  pendente: { label: "Pendente", variant: "warning" },
   cancelado: { label: "Cancelado", variant: "destructive" },
 };
 
