@@ -2,8 +2,8 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-import { Pencil, Trash2, Plus, Search, Phone, ShoppingBag } from "lucide-react";
+import { useSearchParams, useRouter } from "next/navigation";
+import { Pencil, Trash2, Plus, Search, Phone, ShoppingBag, X } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -34,10 +34,12 @@ function getValue(cliente: ClienteComContagem, column: string): string | number 
 
 export function ClientesTable() {
   const searchParams = useSearchParams();
-  const [search, setSearch] = useState(searchParams.get("search") ?? "");
+  const router = useRouter();
+  const clienteId = searchParams.get("cliente_id") ?? "";
+  const [search, setSearch] = useState("");
   const [sort, setSort] = useState<SortState>(null);
   const { handleSort } = useSort();
-  const { data: clientes = [], isLoading, isError } = useClientes(search);
+  const { data: clientes = [], isLoading, isError } = useClientes(search, clienteId);
 
   function onSort(column: string) {
     setSort((prev) => handleSort(prev, column));
@@ -75,15 +77,32 @@ export function ClientesTable() {
         }
       />
 
-      <div className="relative mb-4 max-w-sm">
-        <Search className="absolute left-2.5 top-2.5 size-4 text-muted-foreground" />
-        <Input
-          placeholder="Buscar por nome..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="pl-9"
-        />
-      </div>
+      {clienteId && (
+        <div className="flex items-center gap-2 mb-4 text-sm">
+          <span className="text-muted-foreground">Filtrando por cliente:</span>
+          <span className="font-medium">{clientes[0]?.nome ?? clienteId}</span>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="size-6"
+            onClick={() => router.push("/clientes")}
+          >
+            <X className="size-3.5" />
+          </Button>
+        </div>
+      )}
+
+      {!clienteId && (
+        <div className="relative mb-4 max-w-sm">
+          <Search className="absolute left-2.5 top-2.5 size-4 text-muted-foreground" />
+          <Input
+            placeholder="Buscar por nome..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-9"
+          />
+        </div>
+      )}
 
       <div className="flex-1 overflow-auto min-h-0 rounded-md border">
         <Table>

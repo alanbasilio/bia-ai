@@ -6,18 +6,19 @@ import type { Cliente, ClienteComContagem, ClienteInput } from "@/lib/types";
 
 const CLIENTES_KEY = "clientes";
 
-async function fetchClientes(search: string): Promise<ClienteComContagem[]> {
+async function fetchClientes(search: string, clienteId: string): Promise<ClienteComContagem[]> {
   const params = new URLSearchParams();
-  if (search) params.set("search", search);
+  if (clienteId) params.set("cliente_id", clienteId);
+  else if (search) params.set("search", search);
   const res = await fetch(`/api/clientes?${params}`);
   if (!res.ok) throw new Error("Erro ao buscar clientes");
   return res.json() as Promise<ClienteComContagem[]>;
 }
 
-export function useClientes(search = "") {
+export function useClientes(search = "", clienteId = "") {
   return useQuery<ClienteComContagem[]>({
-    queryKey: [CLIENTES_KEY, search],
-    queryFn: () => fetchClientes(search),
+    queryKey: [CLIENTES_KEY, search, clienteId],
+    queryFn: () => fetchClientes(search, clienteId),
   });
 }
 

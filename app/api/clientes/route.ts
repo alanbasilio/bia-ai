@@ -7,6 +7,7 @@ export const dynamic = "force-dynamic";
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
   const search = searchParams.get("search") ?? "";
+  const clienteId = searchParams.get("cliente_id") ?? "";
   const sb = getSupabase();
 
   let query = sb
@@ -14,7 +15,8 @@ export async function GET(request: NextRequest) {
     .select("*, pedidos(count)")
     .order("nome", { ascending: true });
 
-  if (search) query = query.ilike("nome", `%${search}%`);
+  if (clienteId) query = query.eq("id", clienteId);
+  else if (search) query = query.ilike("nome", `%${search}%`);
 
   const { data, error } = await query;
 
