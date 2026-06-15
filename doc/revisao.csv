@@ -1,0 +1,28 @@
+linha_xlsx,nome,produto,valor_raw,status_raw,data_raw,pgto_raw,avisos
+3,Isabela Pereira,Kit Pulseiras (3un),86,pago,03/02,,data '03/02' sem ano — assumido 2025
+17,Amanda Nascimento,Broche Vintage,"R$43,20",t,15/02/2025,cartao,status desconhecido: 't'
+19,André Barbosa,Tornozeleira Prata,84,enviado correios,13/03,cartão,data '13/03' sem ano — assumido 2025
+27,,Colar Dourado Lua,"R$ 89,90",pago,15/02/2025,pix,nome do cliente vazio
+33,Mateus Gomes,Colar Dourado Lua,90,PENDENTE,20/03,Cartão,data '20/03' sem ano — assumido 2025
+36,Rafael Costa,Tornozeleira Prata,R$ 84.00,devolvido,24-03-2025,PIX,status desconhecido: 'devolvido'
+50,Ana Beatriz,Colar Corrente Grossa,"220,00",postado,30/03,Cartão,data '30/03' sem ano — assumido 2025
+53,MARIA SILVA,Anel Ajustável Ouro,"55,00",pg,21/02,pix,data '21/02' sem ano — assumido 2025
+60,Mariana Souza,Conjunto Colar+Brinco,"R$330,00",enviado correios,07/04,,data '07/04' sem ano — assumido 2025
+70,Juliana Lima,Presilha Cabelo Luxo,55.0,Pago,21/01,PIX - Banco Inter,data '21/01' sem ano — assumido 2025
+82,Teste,teste,,,,,valor vazio | data vazia
+86,Carolina Martins,Brinco Pressão Strass,"R$ 28,00",pg,29/01,Pix,data '29/01' sem ano — assumido 2025
+99,Vinícius Correia,Brinco Gota Cristal,70,devolvido,3/2/2025,PIX - Banco Inter,status desconhecido: 'devolvido'
+106,Felipe Araújo,Colar Dourado Lua,80.91000000000001,Pago,19/01,pix nubank,data '19/01' sem ano — assumido 2025
+120,Patrícia Nunes,Colar Pérolas,120.0,devolvido,05-03-2025,Pix,status desconhecido: 'devolvido'
+128,Amanda Nascimento,Anel Ajustável Ouro,110.0,devolvido,24/02/2025,cartao,status desconhecido: 'devolvido'
+129,Fernanda Rocha,Choker Veludo,"R$ 35,00",OK,01/04,pix nubank,data '01/04' sem ano — assumido 2025
+130,Pedro Henrique,Tornozeleira Prata,"R$ 42,00",pago ,17/03,cartão,data '17/03' sem ano — assumido 2025
+132,Pedro Henrique,Broche Vintage,R$ 48.00,falta pagar,21/02,,data '21/02' sem ano — assumido 2025
+134,Maria Silva,Colar Pérolas,GRÁTIS,pago,01/03/2025,,valor era 'GRÁTIS' — convertido para 0.00
+149,Amanda Nascimento,Colar Pérolas,120,devolvido,17 Mar 2025,PIX - Banco Inter,status desconhecido: 'devolvido'
+163,Bianca Dias,Colar Corrente Grossa,330.0,✅,26/03,pix,data '26/03' sem ano — assumido 2025
+170,Amanda Nascimento,Brinco Gota Cristal,R$ 70.20,pendente,26/03,cartao,data '26/03' sem ano — assumido 2025
+172,Thiago Ferreira,Colar Pérolas,360.0,Pago,24/02,Cartão,data '24/02' sem ano — assumido 2025
+182,João Pedro,Kit Pulseiras (3un),95,pago,15/01,cartao,data '15/01' sem ano — assumido 2025
+184,Ana Beatriz,Colar Dourado Lua,"R$ 89,90",devolvido,16/3/2025,,status desconhecido: 'devolvido'
+193,Lucas Oliveira,Conjunto Colar+Brinco,165.0,enviado correios,02/03,cartao,data '02/03' sem ano — assumido 2025

@@ -1,36 +1,149 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Bia Sell — Painel de Gestão de Pedidos
 
-## Getting Started
+Painel web para gerenciamento de pedidos e clientes de uma loja de acessórios, migrado de planilha Excel para banco de dados estruturado.
 
-First, run the development server:
+## Stack
+
+| Camada | Tecnologia |
+|---|---|
+| Framework | Next.js 16 (App Router) |
+| UI | React 19 + shadcn/ui + Tailwind CSS v4 |
+| Banco de dados | Supabase (PostgreSQL) |
+| Estado / Cache | TanStack React Query v5 |
+| Formulários | React Hook Form + Zod |
+| Notificações | Sonner |
+| Linting | Biome |
+
+## Funcionalidades
+
+- **Pedidos** — listagem, busca por produto/cliente, criação, edição e exclusão
+- **Clientes** — listagem, busca por nome, criação, edição e exclusão
+- Status de pedido com badge visual: `pago · pendente · enviado · cancelado`
+- Sidebar de navegação com layout de dashboard
+- Toasts de feedback para todas as operações
+
+## Pré-requisitos
+
+- Node.js 18+
+- Projeto criado no [Supabase](https://supabase.com)
+
+## Setup
+
+### 1. Instalar dependências
+
+```bash
+npm install
+```
+
+### 2. Configurar variáveis de ambiente
+
+Copie o arquivo de exemplo e preencha com suas credenciais do Supabase (Settings → API):
+
+```bash
+cp .env.local.example .env
+```
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://xxxxxxxxxxxx.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyxxxxxxxxxxxxx
+
+# Opcional — bypassa RLS. Se omitido, usa a anon key (funciona com RLS desabilitado)
+SUPABASE_SERVICE_ROLE_KEY=eyxxxxxxxxxxxxx
+```
+
+### 3. Criar tabelas e importar dados
+
+No Supabase Dashboard → **SQL Editor**, cole e execute o conteúdo de [`public/schema-seed.sql`](public/schema-seed.sql).
+
+O script é idempotente e faz:
+1. Cria os tipos ENUM (`status_pedido`, `forma_pagamento`)
+2. Cria as tabelas `clientes` e `pedidos`
+3. Desabilita RLS (painel admin sem autenticação)
+4. Insere 33 clientes e 184 pedidos migrados da planilha original
+
+### 4. Rodar em desenvolvimento
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Acesse [http://localhost:3000](http://localhost:3000) — redireciona automaticamente para `/pedidos`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Estrutura do projeto
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+app/
+  api/
+    pedidos/          # GET (list+search), POST
+    pedidos/[id]/     # GET, PUT, DELETE
+    clientes/         # GET (list+search), POST
+    clientes/[id]/    # GET, PUT, DELETE
+  pedidos/page.tsx
+  clientes/page.tsx
+  layout.tsx
 
-## Learn More
+components/
+  layout/             # Sidebar, PageHeader
+  pedidos/            # PedidosTable, PedidoForm, PedidoDialog, StatusBadge
+  clientes/           # ClientesTable, ClienteForm, ClienteDialog
+  providers.tsx       # QueryClientProvider + ThemeProvider + Toaster
+  ui/                 # Componentes shadcn
 
-To learn more about Next.js, take a look at the following resources:
+hooks/
+  use-pedidos.ts      # useQuery + useMutation (create / update / delete)
+  use-clientes.ts
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+lib/
+  supabase.ts         # Cliente lazy (usa service_role ou anon key)
+  types.ts            # Tipos TypeScript: Pedido, Cliente, ENUMs
+  utils.ts            # cn()
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+public/
+  bia-sell.xlsx         # Planilha original
+  schema-seed.sql       # Schema + seed para Supabase
+  migrar-supabase.py    # Script de normalização dos dados
+  relatorio-formatacao.md
+```
 
-## Deploy on Vercel
+## Schema do banco
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```sql
+CREATE TYPE status_pedido   AS ENUM ('pago', 'pendente', 'enviado', 'cancelado');
+CREATE TYPE forma_pagamento AS ENUM ('pix', 'cartao', 'dinheiro', 'transferencia');
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+CREATE TABLE clientes (
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  nome        TEXT NOT NULL,
+  instagram   TEXT,
+  whatsapp    TEXT,
+  endereco    TEXT,
+  observacoes TEXT,
+  created_at  TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE pedidos (
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  cliente_id      UUID REFERENCES clientes(id) ON DELETE SET NULL,
+  produto         TEXT NOT NULL,
+  quantidade      INTEGER NOT NULL DEFAULT 1,
+  valor           NUMERIC(10,2) NOT NULL,
+  status          status_pedido NOT NULL DEFAULT 'pendente',
+  data_pedido     DATE NOT NULL,
+  forma_pagamento forma_pagamento,
+  observacoes     TEXT,
+  created_at      TIMESTAMPTZ DEFAULT now()
+);
+```
+
+## Scripts
+
+```bash
+npm run dev      # Servidor de desenvolvimento
+npm run build    # Build de produção
+npm run lint     # Biome check
+npm run format   # Biome format
+```
+
+## Origem dos dados
+
+Os dados foram migrados da planilha `public/bia-sell.xlsx` usando `public/migrar-supabase.py`, que normaliza 6 formatos de data, 5 formatos de valor monetário e 29 variações de status para os 4 valores canônicos do ENUM.
