@@ -1,7 +1,7 @@
-import { NextRequest } from "next/server";
-import { getSupabase } from "@/lib/supabase";
 import type { TablesInsert } from "@/lib/database.types";
+import { getSupabase } from "@/lib/supabase";
 import type { StatusPedido } from "@/lib/types";
+import { NextRequest } from "next/server";
 
 export const dynamic = "force-dynamic";
 
@@ -28,10 +28,10 @@ export async function GET(request: NextRequest) {
 
   const result = search
     ? data.filter(
-        (p) =>
-          p.produto.toLowerCase().includes(search.toLowerCase()) ||
-          p.clientes?.nome?.toLowerCase().includes(search.toLowerCase()),
-      )
+      (p) =>
+        p.produtos?.nome?.toLowerCase().includes(search.toLowerCase()) ||
+        p.clientes?.nome?.toLowerCase().includes(search.toLowerCase()),
+    )
     : data;
 
   return Response.json(result);

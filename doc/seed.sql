@@ -11,11 +11,16 @@
 --   • pedidos sem cliente (nome vazio) → cliente_id NULL
 
 -- 1. ENUMs
-CREATE TYPE status_pedido AS ENUM ('pago', 'pendente', 'enviado', 'cancelado');
-CREATE TYPE forma_pagamento AS ENUM ('pix', 'cartao', 'dinheiro', 'transferencia');
+DO $$ BEGIN
+  CREATE TYPE status_pedido AS ENUM ('pago', 'pendente', 'enviado', 'cancelado');
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+DO $$ BEGIN
+  CREATE TYPE forma_pagamento AS ENUM ('pix', 'cartao', 'dinheiro', 'transferencia');
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 -- 2. Tabelas
-CREATE TABLE produtos (
+CREATE TABLE IF NOT EXISTS produtos (
   id          UUID          DEFAULT gen_random_uuid() PRIMARY KEY,
   nome        TEXT          NOT NULL,
   preco       NUMERIC(10,2),
@@ -23,7 +28,7 @@ CREATE TABLE produtos (
   created_at  TIMESTAMPTZ   DEFAULT now()
 );
 
-CREATE TABLE clientes (
+CREATE TABLE IF NOT EXISTS clientes (
   id          UUID        DEFAULT gen_random_uuid() PRIMARY KEY,
   nome        TEXT        NOT NULL,
   instagram   TEXT,
@@ -33,7 +38,7 @@ CREATE TABLE clientes (
   created_at  TIMESTAMPTZ DEFAULT now()
 );
 
-CREATE TABLE pedidos (
+CREATE TABLE IF NOT EXISTS pedidos (
   id              UUID            DEFAULT gen_random_uuid() PRIMARY KEY,
   cliente_id      UUID            REFERENCES clientes(id) ON DELETE SET NULL,
   produto_id      UUID            NOT NULL REFERENCES produtos(id) ON DELETE RESTRICT,
@@ -50,6 +55,8 @@ CREATE TABLE pedidos (
 ALTER TABLE produtos  DISABLE ROW LEVEL SECURITY;
 ALTER TABLE clientes  DISABLE ROW LEVEL SECURITY;
 ALTER TABLE pedidos   DISABLE ROW LEVEL SECURITY;
+
+TRUNCATE TABLE pedidos, clientes, produtos RESTART IDENTITY CASCADE;
 
 -- 4. Produtos (15 itens)
 INSERT INTO produtos (id, nome, preco, descricao) VALUES
@@ -77,7 +84,6 @@ INSERT INTO clientes (id, nome, instagram, whatsapp, endereco, observacoes) VALU
   ('233114c7-7903-587a-94dc-646a5be7d1ba', 'Bianca Dias', NULL, NULL, NULL, NULL),
   ('0371e359-e026-50a5-98f3-6a32e0ed6714', 'Bruno Carvalho', NULL, '(81) 97044-8657', 'Boa Viagem, Recife', 'compra todo mês'),
   ('dfb183a2-1da2-5832-b6ba-708af695c394', 'Camila Santos', '@camila.acessorios', '(81) 98371-7077', NULL, NULL),
-  ('1d8f20b0-a2b8-558d-8572-dddd89f76345', 'CAMILA SANTOS', '@camila.acessorios', '(81) 98371-7077', NULL, NULL),
   ('8601af2f-bc33-5bb4-a405-5d2bec1f3fbf', 'Carolina Martins', NULL, NULL, NULL, NULL),
   ('1f46cf9e-5765-5b1e-ae9a-843ca3f82707', 'Diego Ribeiro', NULL, NULL, NULL, NULL),
   ('f60ece4a-370a-5670-ad12-3bf46cabe078', 'Felipe Araújo', NULL, NULL, NULL, NULL),
@@ -85,24 +91,18 @@ INSERT INTO clientes (id, nome, instagram, whatsapp, endereco, observacoes) VALU
   ('83cc9c70-5420-57b8-b554-edce65c5fb85', 'Gustavo Almeida', NULL, NULL, NULL, NULL),
   ('943e925b-60ce-5926-9a64-62501d06387e', 'Isabela Pereira', NULL, NULL, NULL, NULL),
   ('6056b09b-7ae1-5df8-99d4-34ac1307cf80', 'João Pedro', NULL, NULL, NULL, NULL),
-  ('20adad9a-d924-56f6-9338-ff8bf1f9d177', 'JOÃO PEDRO', NULL, NULL, NULL, NULL),
   ('ccf309d3-647d-5cb8-892d-0ce92b01b522', 'Juliana Lima', NULL, '(81) 94048-9176', NULL, 'compra todo mês'),
   ('7ad29784-fb9d-59f2-acac-387595f8e5fd', 'Larissa Mendes', NULL, '(81) 92988-4292', 'Boa Viagem, Recife', NULL),
   ('954fff78-07db-51b8-bf36-9712c862b7a2', 'Letícia Moreira', NULL, NULL, NULL, NULL),
   ('86750dc1-3fe8-50a4-8855-d71a81f07f19', 'Lucas Oliveira', '@lucas.acessorios', '(81) 97001-6933', NULL, 'compra todo mês'),
-  ('d3725dd6-fb20-5291-aff9-95fbc9c918e3', 'LUCAS OLIVEIRA', '@lucas.acessorios', '(81) 97001-6933', NULL, 'compra todo mês'),
   ('a7acf1d3-bb7b-5416-94a6-5dbe17df31cc', 'Maria Silva', NULL, NULL, NULL, 'sempre atrasa'),
-  ('a4520675-15d0-5ec0-a59b-6956d92ae5be', 'maria silva', NULL, NULL, NULL, 'sempre atrasa'),
-  ('4839fe55-d4a4-5a10-98e0-75cb84ef5b91', 'MARIA SILVA', NULL, NULL, NULL, 'sempre atrasa'),
   ('2c06c811-84b1-512f-8973-34f6d91f7201', 'Mariana Souza', NULL, NULL, 'Boa Viagem, Recife', 'VIP'),
   ('97c74522-2d03-5342-a9e3-5d289b3130f2', 'Mateus Gomes', NULL, NULL, NULL, NULL),
-  ('0cfb1096-0d51-501c-8724-8c759c0f9217', 'Patrícia Nunes', '@patrícia.acessorios', NULL, NULL, 'sempre atrasa'),
+  ('0cfb1096-0d51-501c-8724-8c759c0f9217', 'Patrícia Nunes', '@patricia.acessorios', NULL, NULL, 'sempre atrasa'),
   ('51910168-351d-50e0-9fff-4125ededec85', 'Pedro Henrique', '@pedro.acessorios', NULL, 'Boa Viagem, Recife', NULL),
   ('e6792b62-b894-533f-a2bb-3279f75b4ba4', 'Rafael Costa', NULL, '(81) 97521-6150', NULL, NULL),
   ('1170357d-6edb-5757-a923-55e37985e3b9', 'Thiago Ferreira', NULL, '(81) 95757-5914', 'Boa Viagem, Recife', NULL),
-  ('5948dca6-c264-5fc1-bf0e-b0ed0624f33e', 'THIAGO FERREIRA', NULL, '(81) 95757-5914', 'Boa Viagem, Recife', NULL),
-  ('cb4e69e5-adaf-58d9-a1e5-50e6e0083a96', 'Vinícius Correia', NULL, NULL, NULL, NULL),
-  ('18fa5182-101d-5787-a56c-b7b453fa1dca', 'VINÍCIUS CORREIA', NULL, NULL, NULL, NULL);
+  ('cb4e69e5-adaf-58d9-a1e5-50e6e0083a96', 'Vinícius Correia', NULL, NULL, NULL, NULL);
 
 -- 6. Pedidos (192 registros — produto_id já vinculado)
 INSERT INTO pedidos (id, cliente_id, produto_id, quantidade, valor, status, data_pedido, forma_pagamento, observacoes) VALUES
@@ -127,7 +127,7 @@ INSERT INTO pedidos (id, cliente_id, produto_id, quantidade, valor, status, data
   ('e16756da-fbcb-572d-9ee6-80a6ce0429de', 'ccf309d3-647d-5cb8-892d-0ce92b01b522', 'aa000000-0000-0000-0000-000000000002', 1, 150.0, 'pago', '2025-03-29', 'dinheiro', NULL),
   ('12bb4619-1b4f-5403-9e04-a148ba349647', '6cf3ade0-8811-5b39-b5cd-62a75d71c749', 'aa000000-0000-0000-0000-000000000004', 1, 78.0, 'pago', '2025-03-21', 'pix', NULL),
   ('e6421355-1ec0-5e9a-b75d-af3c7ef6167a', '6056b09b-7ae1-5df8-99d4-34ac1307cf80', 'aa000000-0000-0000-0000-000000000013', 1, 55.0, 'pendente', '2025-02-09', NULL, NULL),
-  ('4d73f5c6-315b-5925-9a3b-c0510269745a', '20adad9a-d924-56f6-9338-ff8bf1f9d177', 'aa000000-0000-0000-0000-000000000013', 1, 55.0, 'pendente', '2025-02-09', NULL, NULL),
+  ('4d73f5c6-315b-5925-9a3b-c0510269745a', '6056b09b-7ae1-5df8-99d4-34ac1307cf80', 'aa000000-0000-0000-0000-000000000013', 1, 55.0, 'pendente', '2025-02-09', NULL, NULL),
   ('6a00abb4-7c32-53a7-81ff-214a4fec94ba', '943e925b-60ce-5926-9a64-62501d06387e', 'aa000000-0000-0000-0000-000000000015', 1, 42.0, 'pago', '2025-02-26', 'pix', 'presente - embrulhar'),
   ('3c9a649f-2175-55db-91b2-dabee31d6417', '0371e359-e026-50a5-98f3-6a32e0ed6714', 'aa000000-0000-0000-0000-000000000015', 2, 76.0, 'cancelado', '2025-03-29', 'pix', 'ver com Bia'),
   ('23ea83ee-7ffd-585d-a682-9da77caf74e5', '86750dc1-3fe8-50a4-8855-d71a81f07f19', 'aa000000-0000-0000-0000-000000000001', 1, 55.0, 'pago', '2025-01-22', 'dinheiro', NULL),
@@ -156,8 +156,8 @@ INSERT INTO pedidos (id, cliente_id, produto_id, quantidade, valor, status, data
   ('ed2bfa92-2a4d-5087-96c0-8c02a8f7c89e', 'aa22d21b-f292-5343-9309-aad4f593ca22', 'aa000000-0000-0000-0000-000000000009', 2, 161.82, 'pendente', '2025-03-14', 'pix', NULL),
   ('adb3726d-4063-5e90-ab45-41a68baeb40b', '6cf3ade0-8811-5b39-b5cd-62a75d71c749', 'aa000000-0000-0000-0000-000000000008', 2, 220.0, 'enviado', '2025-03-30', 'cartao', 'mandou msg no zap'),
   ('a2f598d7-8f77-5361-b7a7-60418ad25c37', '0371e359-e026-50a5-98f3-6a32e0ed6714', 'aa000000-0000-0000-0000-000000000004', 1, 78.0, 'pago', '2025-01-21', 'pix', '2a compra'),
-  ('60f67da5-3389-5a2d-8b52-9be9623f8504', 'a4520675-15d0-5ec0-a59b-6956d92ae5be', 'aa000000-0000-0000-0000-000000000003', 2, 90.0, 'pago', '2025-02-20', 'pix', NULL),
-  ('483efd4f-f060-56a1-8448-f9bee713ef0e', '4839fe55-d4a4-5a10-98e0-75cb84ef5b91', 'aa000000-0000-0000-0000-000000000001', 1, 55.0, 'pago', '2025-02-21', 'pix', 'mesmo endereço'),
+  ('60f67da5-3389-5a2d-8b52-9be9623f8504', 'a7acf1d3-bb7b-5416-94a6-5dbe17df31cc', 'aa000000-0000-0000-0000-000000000003', 2, 90.0, 'pago', '2025-02-20', 'pix', NULL),
+  ('483efd4f-f060-56a1-8448-f9bee713ef0e', 'a7acf1d3-bb7b-5416-94a6-5dbe17df31cc', 'aa000000-0000-0000-0000-000000000001', 1, 55.0, 'pago', '2025-02-21', 'pix', 'mesmo endereço'),
   ('4e9e5064-6ee1-54f5-a50f-8aaaff0ccc14', '943e925b-60ce-5926-9a64-62501d06387e', 'aa000000-0000-0000-0000-000000000010', 1, 120.0, 'pago', '2025-02-12', 'pix', 'frete grátis combinado'),
   ('cc636819-102e-5188-b9c2-03fafe65aba1', '0cfb1096-0d51-501c-8724-8c759c0f9217', 'aa000000-0000-0000-0000-000000000015', 1, 42.0, 'enviado', '2025-03-06', 'pix', 'comprou pelo stories'),
   ('f68fbdaa-f44b-5c2e-9e6a-1300340bdf23', '8601af2f-bc33-5bb4-a405-5d2bec1f3fbf', 'aa000000-0000-0000-0000-000000000008', 1, 110.0, 'pendente', '2025-02-04', 'cartao', NULL),
@@ -186,9 +186,9 @@ INSERT INTO pedidos (id, cliente_id, produto_id, quantidade, valor, status, data
   ('9b79925f-2768-5686-bdca-111826c997f0', '6cf3ade0-8811-5b39-b5cd-62a75d71c749', 'aa000000-0000-0000-0000-000000000001', 2, 110.0, 'pendente', '2025-02-04', 'dinheiro', 'trocou de cor depois'),
   ('93c47435-5cc1-531b-a8fb-548247e09fd9', '83cc9c70-5420-57b8-b554-edce65c5fb85', 'aa000000-0000-0000-0000-000000000001', 1, 55.0, 'pendente', '2025-03-30', NULL, 'mandou msg no zap'),
   ('bebb1377-d715-5bae-9a60-f157468af7ca', 'cb4e69e5-adaf-58d9-a1e5-50e6e0083a96', 'aa000000-0000-0000-0000-000000000007', 1, 35.0, 'pago', '2025-02-08', 'pix', '2a compra'),
-  ('f2b1274c-321d-522c-9904-513fe6f06275', '18fa5182-101d-5787-a56c-b7b453fa1dca', 'aa000000-0000-0000-0000-000000000007', 1, 35.0, 'pago', '2025-02-08', 'pix', '2a compra'),
+  ('f2b1274c-321d-522c-9904-513fe6f06275', 'cb4e69e5-adaf-58d9-a1e5-50e6e0083a96', 'aa000000-0000-0000-0000-000000000007', 1, 35.0, 'pago', '2025-02-08', 'pix', '2a compra'),
   ('d6db3906-9cfa-583d-a5e2-27c179128e4f', '86750dc1-3fe8-50a4-8855-d71a81f07f19', 'aa000000-0000-0000-0000-000000000002', 1, 150.0, 'pago', '2025-01-28', 'cartao', '2a compra'),
-  ('00839378-3e7f-506f-9aef-9087e78a7e05', 'd3725dd6-fb20-5291-aff9-95fbc9c918e3', 'aa000000-0000-0000-0000-000000000002', 1, 150.0, 'pago', '2025-01-28', 'cartao', '2a compra'),
+  ('00839378-3e7f-506f-9aef-9087e78a7e05', '86750dc1-3fe8-50a4-8855-d71a81f07f19', 'aa000000-0000-0000-0000-000000000002', 1, 150.0, 'pago', '2025-01-28', 'cartao', '2a compra'),
   ('4c899817-7351-5ecc-b82d-6c2be33eff25', '8601af2f-bc33-5bb4-a405-5d2bec1f3fbf', 'aa000000-0000-0000-0000-000000000005', 1, 28.0, 'pago', '2025-01-29', 'pix', 'entrega urgente'),
   ('54e4030e-22c8-54a4-9129-2eac11053a9e', 'f60ece4a-370a-5670-ad12-3bf46cabe078', 'aa000000-0000-0000-0000-000000000014', 1, 65.0, 'pago', '2025-03-16', 'pix', NULL),
   ('4f2d1ebd-79d2-5866-a570-e8c54f534ff6', 'a7acf1d3-bb7b-5416-94a6-5dbe17df31cc', 'aa000000-0000-0000-0000-000000000005', 1, 28.0, 'pago', '2025-02-17', 'cartao', 'instagram: @maria'),
@@ -199,8 +199,8 @@ INSERT INTO pedidos (id, cliente_id, produto_id, quantidade, valor, status, data
   ('cc4946f7-0253-5afc-8061-3db083b66523', '83cc9c70-5420-57b8-b554-edce65c5fb85', 'aa000000-0000-0000-0000-000000000009', 1, 89.9, 'enviado', '2025-04-04', 'pix', NULL),
   ('b38c2720-aa23-5407-983d-a46a9abf7ca8', '233114c7-7903-587a-94dc-646a5be7d1ba', 'aa000000-0000-0000-0000-000000000005', 1, 28.0, 'pago', '2025-02-28', 'pix', NULL),
   ('5d3b2c14-784b-560e-94c4-f055531e3846', 'dfb183a2-1da2-5832-b6ba-708af695c394', 'aa000000-0000-0000-0000-000000000003', 1, 45.0, 'pendente', '2025-03-22', 'cartao', 'trocou de cor depois'),
-  ('492c3313-d038-5e97-b986-d71b24fee078', '1d8f20b0-a2b8-558d-8572-dddd89f76345', 'aa000000-0000-0000-0000-000000000003', 1, 45.0, 'pendente', '2025-03-22', 'cartao', 'trocou de cor depois'),
-  ('773988f7-d72b-5999-9307-214d626fd336', '1d8f20b0-a2b8-558d-8572-dddd89f76345', 'aa000000-0000-0000-0000-000000000003', 1, 45.0, 'pendente', '2025-03-22', 'cartao', 'trocou de cor depois'),
+  ('492c3313-d038-5e97-b986-d71b24fee078', 'dfb183a2-1da2-5832-b6ba-708af695c394', 'aa000000-0000-0000-0000-000000000003', 1, 45.0, 'pendente', '2025-03-22', 'cartao', 'trocou de cor depois'),
+  ('773988f7-d72b-5999-9307-214d626fd336', 'dfb183a2-1da2-5832-b6ba-708af695c394', 'aa000000-0000-0000-0000-000000000003', 1, 45.0, 'pendente', '2025-03-22', 'cartao', 'trocou de cor depois'),
   ('93229f97-2a8c-59ee-8a7b-742d6a6c2cce', '954fff78-07db-51b8-bf36-9712c862b7a2', 'aa000000-0000-0000-0000-000000000010', 1, 120.0, 'pago', '2025-03-10', 'pix', 'frete grátis combinado'),
   ('25152334-23be-5939-9006-3b69992df0d2', 'cb4e69e5-adaf-58d9-a1e5-50e6e0083a96', 'aa000000-0000-0000-0000-000000000004', 1, 70.0, 'cancelado', '2025-02-03', 'pix', 'devolvido'),
   ('2b9d9b1c-b284-5163-b343-a7bba7854f6f', 'aa22d21b-f292-5343-9309-aad4f593ca22', 'aa000000-0000-0000-0000-000000000005', 1, 28.0, 'pago', '2025-03-06', 'cartao', NULL),
@@ -221,7 +221,7 @@ INSERT INTO pedidos (id, cliente_id, produto_id, quantidade, valor, status, data
   ('88f86a7d-6701-5005-9b96-27b017540b41', 'f60ece4a-370a-5670-ad12-3bf46cabe078', 'aa000000-0000-0000-0000-000000000009', 1, 89.9, 'cancelado', '2025-04-02', 'pix', 'presente - embrulhar'),
   ('577d6ba2-c400-5901-bd75-994dd379ac86', '233114c7-7903-587a-94dc-646a5be7d1ba', 'aa000000-0000-0000-0000-000000000002', 2, 300.0, 'pago', '2025-04-03', 'pix', 'ligar segunda'),
   ('da495344-ace5-5641-b49b-a81390264be8', '1170357d-6edb-5757-a923-55e37985e3b9', 'aa000000-0000-0000-0000-000000000004', 1, 78.0, 'pendente', '2025-02-26', 'pix', NULL),
-  ('8154f815-b309-539c-9134-ebb564adcda6', '5948dca6-c264-5fc1-bf0e-b0ed0624f33e', 'aa000000-0000-0000-0000-000000000004', 1, 78.0, 'pendente', '2025-02-26', 'pix', NULL),
+  ('8154f815-b309-539c-9134-ebb564adcda6', '1170357d-6edb-5757-a923-55e37985e3b9', 'aa000000-0000-0000-0000-000000000004', 1, 78.0, 'pendente', '2025-02-26', 'pix', NULL),
   ('b2dc488d-ee2a-5578-9f1a-fd9a686da306', '97c74522-2d03-5342-a9e3-5d289b3130f2', 'aa000000-0000-0000-0000-000000000013', 1, 55.0, 'cancelado', '2025-03-09', 'cartao', 'trocou de cor depois'),
   ('bbab3cb7-a0a3-5645-a6e5-d018e08f4737', '0cfb1096-0d51-501c-8724-8c759c0f9217', 'aa000000-0000-0000-0000-000000000010', 1, 120.0, 'cancelado', '2025-03-05', 'pix', 'devolvido'),
   ('820f75d2-e84d-5a8c-ae0e-bd4dac91d297', '943e925b-60ce-5926-9a64-62501d06387e', 'aa000000-0000-0000-0000-000000000010', 1, 120.0, 'pago', '2025-02-06', 'cartao', 'ver com Bia'),
