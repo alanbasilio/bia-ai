@@ -1,9 +1,10 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { LayoutDashboard, ShoppingBag, Users } from "lucide-react";
+import { LayoutDashboard, LogOut, ShoppingBag, Users } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "./theme-toggle";
 
 const links = [
@@ -13,6 +14,13 @@ const links = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+
+  async function handleLogout() {
+    await fetch("/api/auth/logout", { method: "POST" });
+    router.push("/login");
+    router.refresh();
+  }
 
   return (
     <aside className="flex flex-col w-60 h-screen border-r bg-sidebar px-3 py-4 gap-1 shrink-0 overflow-y-auto">
@@ -39,9 +47,20 @@ export function Sidebar() {
         ))}
       </nav>
 
-      <div className="mt-auto flex items-center justify-between px-3 py-2">
-        <span className="text-xs text-sidebar-foreground/50">Tema</span>
-        <ThemeToggle />
+      <div className="mt-auto flex flex-col gap-1">
+        <div className="flex items-center justify-between px-3 py-2">
+          <span className="text-xs text-sidebar-foreground/50">Tema</span>
+          <ThemeToggle />
+        </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="justify-start gap-3 px-3 text-sidebar-foreground hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground"
+          onClick={handleLogout}
+        >
+          <LogOut className="size-4 shrink-0" />
+          Sair
+        </Button>
       </div>
     </aside>
   );

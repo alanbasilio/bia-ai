@@ -1,4 +1,3 @@
-import { Sidebar } from "@/components/layout/sidebar";
 import { Providers } from "@/components/providers";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
@@ -30,13 +29,8 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-screen overflow-hidden antialiased`}
       suppressHydrationWarning
     >
-      <body className="h-screen overflow-hidden flex">
-        <Providers>
-          <Sidebar />
-          <main className="flex-1 flex flex-col overflow-hidden p-6">
-            {children}
-          </main>
-        </Providers>
+      <body className="h-screen overflow-hidden">
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
