@@ -1,10 +1,16 @@
 import { Badge } from "@/components/ui/badge";
 import type { StatusPedido } from "@/lib/types";
 
-const statusConfig: Record<StatusPedido, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
-  pago:      { label: "Pago",      variant: "default" },
-  enviado:   { label: "Enviado",   variant: "secondary" },
-  pendente:  { label: "Pendente",  variant: "outline" },
+const statusConfig: Record<
+  StatusPedido,
+  {
+    label: string;
+    variant: "default" | "secondary" | "destructive" | "outline";
+  }
+> = {
+  pago: { label: "Pago", variant: "default" },
+  enviado: { label: "Enviado", variant: "secondary" },
+  pendente: { label: "Pendente", variant: "outline" },
   cancelado: { label: "Cancelado", variant: "destructive" },
 };
 

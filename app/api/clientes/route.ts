@@ -9,7 +9,10 @@ export async function GET(request: NextRequest) {
   const search = searchParams.get("search") ?? "";
   const sb = getSupabase();
 
-  let query = sb.from("clientes").select("*").order("nome", { ascending: true });
+  let query = sb
+    .from("clientes")
+    .select("*")
+    .order("nome", { ascending: true });
 
   if (search) query = query.ilike("nome", `%${search}%`);
 

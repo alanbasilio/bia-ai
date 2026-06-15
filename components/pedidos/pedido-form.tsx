@@ -44,7 +44,11 @@ interface PedidoFormProps {
   isPending: boolean;
 }
 
-export function PedidoForm({ defaultValues, onSubmit, isPending }: PedidoFormProps) {
+export function PedidoForm({
+  defaultValues,
+  onSubmit,
+  isPending,
+}: PedidoFormProps) {
   const { data: clientes = [] } = useClientes();
 
   const form = useForm<FormValues, unknown, FormValues>({
@@ -55,7 +59,8 @@ export function PedidoForm({ defaultValues, onSubmit, isPending }: PedidoFormPro
       quantidade: defaultValues?.quantidade ?? 1,
       valor: defaultValues?.valor ?? 0,
       status: defaultValues?.status ?? "pendente",
-      data_pedido: defaultValues?.data_pedido ?? new Date().toISOString().split("T")[0],
+      data_pedido:
+        defaultValues?.data_pedido ?? new Date().toISOString().split("T")[0],
       forma_pagamento: defaultValues?.forma_pagamento ?? null,
       observacoes: defaultValues?.observacoes ?? null,
     },
@@ -63,7 +68,10 @@ export function PedidoForm({ defaultValues, onSubmit, isPending }: PedidoFormPro
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit((v) => onSubmit(v as PedidoInput))} className="space-y-4">
+      <form
+        onSubmit={form.handleSubmit((v) => onSubmit(v as PedidoInput))}
+        className="space-y-4"
+      >
         <FormField
           control={form.control}
           name="cliente_id"

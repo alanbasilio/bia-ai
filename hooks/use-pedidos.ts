@@ -47,7 +47,10 @@ export function useCreatePedido() {
 export function useUpdatePedido() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, ...input }: Partial<PedidoInput> & { id: string }) => {
+    mutationFn: async ({
+      id,
+      ...input
+    }: Partial<PedidoInput> & { id: string }) => {
       const res = await fetch(`/api/pedidos/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },

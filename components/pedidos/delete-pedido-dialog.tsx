@@ -19,7 +19,11 @@ interface DeletePedidoDialogProps {
   trigger: React.ReactNode;
 }
 
-export function DeletePedidoDialog({ id, produto, trigger }: DeletePedidoDialogProps) {
+export function DeletePedidoDialog({
+  id,
+  produto,
+  trigger,
+}: DeletePedidoDialogProps) {
   const [open, setOpen] = useState(false);
   const del = useDeletePedido();
 
@@ -41,9 +45,7 @@ export function DeletePedidoDialog({ id, produto, trigger }: DeletePedidoDialogP
           <Button
             variant="destructive"
             disabled={del.isPending}
-            onClick={() =>
-              del.mutate(id, { onSuccess: () => setOpen(false) })
-            }
+            onClick={() => del.mutate(id, { onSuccess: () => setOpen(false) })}
           >
             {del.isPending ? "Excluindo..." : "Excluir"}
           </Button>

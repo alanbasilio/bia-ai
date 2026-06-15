@@ -25,7 +25,10 @@ export function PedidoDialog({ pedido, trigger }: PedidoDialogProps) {
 
   function handleSubmit(data: PedidoInput) {
     if (pedido) {
-      update.mutate({ id: pedido.id, ...data }, { onSuccess: () => setOpen(false) });
+      update.mutate(
+        { id: pedido.id, ...data },
+        { onSuccess: () => setOpen(false) },
+      );
     } else {
       create.mutate(data, { onSuccess: () => setOpen(false) });
     }

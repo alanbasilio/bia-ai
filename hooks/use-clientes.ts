@@ -47,7 +47,10 @@ export function useCreateCliente() {
 export function useUpdateCliente() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, ...input }: Partial<ClienteInput> & { id: string }) => {
+    mutationFn: async ({
+      id,
+      ...input
+    }: Partial<ClienteInput> & { id: string }) => {
       const res = await fetch(`/api/clientes/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },

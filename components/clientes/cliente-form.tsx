@@ -36,7 +36,11 @@ interface ClienteFormProps {
   isPending: boolean;
 }
 
-export function ClienteForm({ defaultValues, onSubmit, isPending }: ClienteFormProps) {
+export function ClienteForm({
+  defaultValues,
+  onSubmit,
+  isPending,
+}: ClienteFormProps) {
   const form = useForm<FormValues, unknown, FormValues>({
     resolver: zodResolver(schema) as never,
     defaultValues: {
@@ -50,7 +54,10 @@ export function ClienteForm({ defaultValues, onSubmit, isPending }: ClienteFormP
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit((v) => onSubmit(v as ClienteInput))} className="space-y-4">
+      <form
+        onSubmit={form.handleSubmit((v) => onSubmit(v as ClienteInput))}
+        className="space-y-4"
+      >
         <FormField
           control={form.control}
           name="nome"

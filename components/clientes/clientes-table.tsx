@@ -63,21 +63,30 @@ export function ClientesTable() {
           <TableBody>
             {isLoading && (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-10 text-muted-foreground">
+                <TableCell
+                  colSpan={6}
+                  className="text-center py-10 text-muted-foreground"
+                >
                   Carregando...
                 </TableCell>
               </TableRow>
             )}
             {isError && (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-10 text-destructive">
+                <TableCell
+                  colSpan={6}
+                  className="text-center py-10 text-destructive"
+                >
                   Erro ao carregar clientes.
                 </TableCell>
               </TableRow>
             )}
             {!isLoading && clientes.length === 0 && (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-10 text-muted-foreground">
+                <TableCell
+                  colSpan={6}
+                  className="text-center py-10 text-muted-foreground"
+                >
                   Nenhum cliente encontrado.
                 </TableCell>
               </TableRow>
@@ -124,7 +133,11 @@ export function ClientesTable() {
                       id={cliente.id}
                       nome={cliente.nome}
                       trigger={
-                        <Button variant="ghost" size="icon" className="size-8 text-destructive hover:text-destructive">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="size-8 text-destructive hover:text-destructive"
+                        >
                           <Trash2 className="size-3.5" />
                         </Button>
                       }

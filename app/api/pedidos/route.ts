@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
     ? data.filter(
         (p: { produto: string; clientes?: { nome: string } | null }) =>
           p.produto.toLowerCase().includes(search.toLowerCase()) ||
-          p.clientes?.nome?.toLowerCase().includes(search.toLowerCase())
+          p.clientes?.nome?.toLowerCase().includes(search.toLowerCase()),
       )
     : data;
 

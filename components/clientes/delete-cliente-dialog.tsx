@@ -19,7 +19,11 @@ interface DeleteClienteDialogProps {
   trigger: React.ReactNode;
 }
 
-export function DeleteClienteDialog({ id, nome, trigger }: DeleteClienteDialogProps) {
+export function DeleteClienteDialog({
+  id,
+  nome,
+  trigger,
+}: DeleteClienteDialogProps) {
   const [open, setOpen] = useState(false);
   const del = useDeleteCliente();
 
@@ -41,9 +45,7 @@ export function DeleteClienteDialog({ id, nome, trigger }: DeleteClienteDialogPr
           <Button
             variant="destructive"
             disabled={del.isPending}
-            onClick={() =>
-              del.mutate(id, { onSuccess: () => setOpen(false) })
-            }
+            onClick={() => del.mutate(id, { onSuccess: () => setOpen(false) })}
           >
             {del.isPending ? "Excluindo..." : "Excluir"}
           </Button>

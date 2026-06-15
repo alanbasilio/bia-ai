@@ -25,7 +25,10 @@ export function ClienteDialog({ cliente, trigger }: ClienteDialogProps) {
 
   function handleSubmit(data: ClienteInput) {
     if (cliente) {
-      update.mutate({ id: cliente.id, ...data }, { onSuccess: () => setOpen(false) });
+      update.mutate(
+        { id: cliente.id, ...data },
+        { onSuccess: () => setOpen(false) },
+      );
     } else {
       create.mutate(data, { onSuccess: () => setOpen(false) });
     }
@@ -36,7 +39,9 @@ export function ClienteDialog({ cliente, trigger }: ClienteDialogProps) {
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>{cliente ? "Editar Cliente" : "Novo Cliente"}</DialogTitle>
+          <DialogTitle>
+            {cliente ? "Editar Cliente" : "Novo Cliente"}
+          </DialogTitle>
         </DialogHeader>
         <ClienteForm
           defaultValues={cliente}
