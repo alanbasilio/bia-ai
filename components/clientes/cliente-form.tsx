@@ -12,6 +12,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import type { Cliente, ClienteInput } from "@/lib/types";
 
@@ -154,8 +155,9 @@ export function ClienteForm({
             <FormItem>
               <FormLabel>Observações</FormLabel>
               <FormControl>
-                <Input
+                <Textarea
                   placeholder="Opcional"
+                  rows={3}
                   {...field}
                   value={field.value ?? ""}
                 />

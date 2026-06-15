@@ -12,6 +12,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -23,6 +24,22 @@ import {
 import { DatePickerField } from "@/components/ui/date-picker";
 import { useClientes } from "@/hooks/use-clientes";
 import type { Pedido, PedidoInput } from "@/lib/types";
+
+function maskBRL(raw: string): string {
+  const digits = raw.replace(/\D/g, "").replace(/^0+/, "") || "0";
+  const cents = parseInt(digits.slice(0, 10), 10);
+  return (cents / 100).toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+}
+
+function parseBRL(masked: string): number {
+  const digits = masked.replace(/\D/g, "");
+  return digits ? parseInt(digits, 10) / 100 : 0;
+}
 
 const schema = z.object({
   cliente_id: z.string().uuid().nullable(),
@@ -135,9 +152,14 @@ export function PedidoForm({
             name="valor"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Valor (R$)</FormLabel>
+                <FormLabel>Valor</FormLabel>
                 <FormControl>
-                  <Input type="number" step="0.01" min={0} {...field} />
+                  <Input
+                    inputMode="numeric"
+                    placeholder="R$ 0,00"
+                    value={maskBRL(String(Math.round((field.value as number) * 100)))}
+                    onChange={(e) => field.onChange(parseBRL(e.target.value))}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -222,8 +244,9 @@ export function PedidoForm({
             <FormItem>
               <FormLabel>Observações</FormLabel>
               <FormControl>
-                <Input
+                <Textarea
                   placeholder="Opcional"
+                  rows={3}
                   value={field.value ?? ""}
                   onChange={(e) => field.onChange(e.target.value || null)}
                 />
