@@ -1,8 +1,7 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { Button } from "@/components/ui/button";
+import { DatePickerField } from "@/components/ui/date-picker";
 import {
   Form,
   FormControl,
@@ -12,8 +11,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -21,10 +18,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { DatePickerField } from "@/components/ui/date-picker";
+import { Textarea } from "@/components/ui/textarea";
 import { useClientes } from "@/hooks/use-clientes";
 import { useProdutos } from "@/hooks/use-produtos";
 import type { Pedido, PedidoInput } from "@/lib/types";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 function maskBRL(raw: string): string {
   const digits = raw.replace(/\D/g, "").replace(/^0+/, "") || "0";
@@ -43,7 +43,7 @@ function parseBRL(masked: string): number {
 }
 
 const schema = z.object({
-  cliente_id: z.string().uuid().nullable(),
+  cliente_id: z.string().min(1, "Selecione um cliente"),
   produto_id: z.string().min(1, "Selecione um produto"),
   quantidade: z.coerce.number().int().min(1),
   valor: z.coerce.number().min(0),
@@ -74,7 +74,7 @@ export function PedidoForm({
   const form = useForm<FormValues, unknown, FormValues>({
     resolver: zodResolver(schema) as never,
     defaultValues: {
-      cliente_id: defaultValues?.cliente_id ?? null,
+      cliente_id: defaultValues?.cliente_id ?? "",
       produto_id: defaultValues?.produto_id ?? "",
       quantidade: defaultValues?.quantidade ?? 1,
       valor: defaultValues?.valor ?? 0,
@@ -100,8 +100,8 @@ export function PedidoForm({
             <FormItem>
               <FormLabel>Cliente</FormLabel>
               <Select
-                onValueChange={(v) => field.onChange(v === "_none" ? null : v)}
-                value={field.value ?? "_none"}
+                onValueChange={(v) => field.onChange(v)}
+                value={field.value || undefined}
               >
                 <FormControl>
                   <SelectTrigger className="w-full">
@@ -109,7 +109,6 @@ export function PedidoForm({
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="_none">Sem cliente</SelectItem>
                   {clientes.map((c) => (
                     <SelectItem key={c.id} value={c.id}>
                       {c.nome}
