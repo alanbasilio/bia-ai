@@ -76,9 +76,9 @@
 
   /* semantic */
   --destructive: oklch(0.55 0.22 25);
-  --success: oklch(0.52 0.17 152);
-  --warning: oklch(0.62 0.19 72);
-  --info: oklch(0.50 0.16 240);
+  --success: oklch(0.45 0.16 152);
+  --warning: oklch(0.52 0.18 58);
+  --info: oklch(0.44 0.16 240);
 
   --border: oklch(0.87 0.015 72);
   --input: oklch(0.87 0.015 72);
