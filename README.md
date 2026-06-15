@@ -51,18 +51,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=eyxxxxxxxxxxxxx
 SUPABASE_SERVICE_ROLE_KEY=eyxxxxxxxxxxxxx
 ```
 
-### 3. Criar tabelas e importar dados
-
-No Supabase Dashboard → **SQL Editor**, cole e execute o conteúdo de [`public/schema-seed.sql`](public/schema-seed.sql).
-
-O script é idempotente e faz:
-
-1. Cria os tipos ENUM (`status_pedido`, `forma_pagamento`)
-2. Cria as tabelas `clientes` e `pedidos`
-3. Desabilita RLS (painel admin sem autenticação)
-4. Insere 33 clientes e 184 pedidos migrados da planilha original
-
-### 4. Rodar em desenvolvimento
+### 3. Rodar em desenvolvimento
 
 ```bash
 npm run dev
@@ -99,11 +88,11 @@ lib/
   types.ts            # Tipos TypeScript: Pedido, Cliente, ENUMs
   utils.ts            # cn()
 
-public/
+doc/
   bia-sell.xlsx         # Planilha original
-  schema-seed.sql       # Schema + seed para Supabase
-  migrar-supabase.py    # Script de normalização dos dados
+  revisao.csv         # Planilha revisada
   relatorio-formatacao.md
+  relatorio-ajustes.md
 ```
 
 ## Schema do banco
