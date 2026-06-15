@@ -32,7 +32,7 @@ const PGTO_LABEL: Record<string, string> = {
 function getValue(pedido: Pedido, column: string): string | number {
   switch (column) {
     case "cliente":    return pedido.clientes?.nome ?? "";
-    case "produto":    return pedido.produto;
+    case "produto":    return pedido.produtos?.nome ?? "";
     case "quantidade": return pedido.quantidade;
     case "valor":      return pedido.valor;
     case "status":     return pedido.status;
@@ -58,7 +58,8 @@ export function PedidosTable() {
   const router = useRouter();
   const clienteId = searchParams.get("cliente_id") ?? "";
   const clienteNome = searchParams.get("cliente_nome") ?? "";
-  const { data: pedidos = [], isLoading, isError } = usePedidos(search, clienteId);
+  const produtoId = searchParams.get("produto_id") ?? "";
+  const { data: pedidos = [], isLoading, isError } = usePedidos(search, clienteId, produtoId);
 
   function onSort(column: string) {
     setSort((prev) => handleSort(prev, column));
@@ -79,10 +80,16 @@ export function PedidosTable() {
     });
   }, [pedidos, sort]);
 
-  const filterBanner = clienteId && (
+  const filterBanner = (clienteId || produtoId) && (
     <div className="flex items-center gap-2 mb-4 text-sm">
-      <span className="text-muted-foreground">Filtrando por cliente:</span>
-      <span className="font-medium">{clienteNome || clienteId}</span>
+      <span className="text-muted-foreground">
+        {clienteId ? "Filtrando por cliente:" : "Filtrando por produto:"}
+      </span>
+      <span className="font-medium">
+        {clienteId
+          ? clienteNome || clienteId
+          : pedidos[0]?.produtos?.nome ?? produtoId}
+      </span>
       <Button
         variant="ghost"
         size="icon"
@@ -118,7 +125,7 @@ export function PedidosTable() {
       />
       <DeletePedidoDialog
         id={pedido.id}
-        produto={pedido.produto}
+        produto={pedido.produtos?.nome ?? "—"}
         trigger={
           <Button
             variant="ghost"
@@ -178,7 +185,7 @@ export function PedidosTable() {
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
                   <p className="font-medium text-sm truncate">
-                    {pedido.produto}
+                    {pedido.produtos?.nome}
                   </p>
                   {pedido.clientes ? (
                     <Link
@@ -279,7 +286,7 @@ export function PedidosTable() {
                       "—"
                     )}
                   </TableCell>
-                  <TableCell>{pedido.produto}</TableCell>
+                  <TableCell>{pedido.produtos?.nome}</TableCell>
                   <TableCell className="text-center">{pedido.quantidade}</TableCell>
                   <TableCell className="text-right">
                     {formatBRL(pedido.valor)}

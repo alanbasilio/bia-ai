@@ -6,19 +6,20 @@ import type { Pedido, PedidoInput } from "@/lib/types";
 
 const PEDIDOS_KEY = "pedidos";
 
-async function fetchPedidos(search: string, clienteId: string): Promise<Pedido[]> {
+async function fetchPedidos(search: string, clienteId: string, produtoId: string): Promise<Pedido[]> {
   const params = new URLSearchParams();
   if (search) params.set("search", search);
   if (clienteId) params.set("cliente_id", clienteId);
+  if (produtoId) params.set("produto_id", produtoId);
   const res = await fetch(`/api/pedidos?${params}`);
   if (!res.ok) throw new Error("Erro ao buscar pedidos");
   return res.json();
 }
 
-export function usePedidos(search = "", clienteId = "") {
+export function usePedidos(search = "", clienteId = "", produtoId = "") {
   return useQuery<Pedido[]>({
-    queryKey: [PEDIDOS_KEY, search, clienteId],
-    queryFn: () => fetchPedidos(search, clienteId),
+    queryKey: [PEDIDOS_KEY, search, clienteId, produtoId],
+    queryFn: () => fetchPedidos(search, clienteId, produtoId),
   });
 }
 

@@ -10,15 +10,17 @@ export async function GET(request: NextRequest) {
   const search = searchParams.get("search") ?? "";
   const status = searchParams.get("status") ?? "";
   const clienteId = searchParams.get("cliente_id") ?? "";
+  const produtoId = searchParams.get("produto_id") ?? "";
   const sb = getSupabase();
 
   let query = sb
     .from("pedidos")
-    .select("*, clientes(id, nome)")
+    .select("*, clientes(id, nome), produtos(id, nome, preco)")
     .order("data_pedido", { ascending: false });
 
   if (status) query = query.eq("status", status as StatusPedido);
   if (clienteId) query = query.eq("cliente_id", clienteId);
+  if (produtoId) query = query.eq("produto_id", produtoId);
 
   const { data, error } = await query;
 

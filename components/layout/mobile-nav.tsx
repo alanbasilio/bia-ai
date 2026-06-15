@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { LogOut, ShoppingBag, Sun, Moon, Users } from "lucide-react";
+import { LogOut, Package, ShoppingBag, Sun, Moon, Users } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
@@ -9,6 +9,7 @@ import { useTheme } from "next-themes";
 const links = [
   { href: "/pedidos", label: "Pedidos", icon: ShoppingBag },
   { href: "/clientes", label: "Clientes", icon: Users },
+  { href: "/produtos", label: "Produtos", icon: Package },
 ];
 
 export function MobileNav() {

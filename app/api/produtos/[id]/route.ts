@@ -11,8 +11,8 @@ export async function GET(_req: NextRequest, { params }: Params) {
   const sb = getSupabase();
 
   const { data, error } = await sb
-    .from("pedidos")
-    .select("*, clientes(id, nome), produtos(id, nome, preco)")
+    .from("produtos")
+    .select("*, pedidos(count)")
     .eq("id", id)
     .single();
 
@@ -22,14 +22,14 @@ export async function GET(_req: NextRequest, { params }: Params) {
 
 export async function PUT(request: NextRequest, { params }: Params) {
   const { id } = await params;
-  const body = (await request.json()) as TablesUpdate<"pedidos">;
+  const body = (await request.json()) as TablesUpdate<"produtos">;
   const sb = getSupabase();
 
   const { data, error } = await sb
-    .from("pedidos")
+    .from("produtos")
     .update(body)
     .eq("id", id)
-    .select("*, clientes(id, nome), produtos(id, nome, preco)")
+    .select("*, pedidos(count)")
     .single();
 
   if (error) return Response.json({ error: error.message }, { status: 500 });
@@ -40,8 +40,24 @@ export async function DELETE(_req: NextRequest, { params }: Params) {
   const { id } = await params;
   const sb = getSupabase();
 
-  const { error } = await sb.from("pedidos").delete().eq("id", id);
+  const { count, error: countError } = await sb
+    .from("pedidos")
+    .select("*", { count: "exact", head: true })
+    .eq("produto_id", id);
 
+  if (countError)
+    return Response.json({ error: countError.message }, { status: 500 });
+
+  if (count && count > 0) {
+    return Response.json(
+      {
+        error: `Este produto possui ${count} pedido${count > 1 ? "s" : ""} associado${count > 1 ? "s" : ""} e não pode ser excluído.`,
+      },
+      { status: 409 },
+    );
+  }
+
+  const { error } = await sb.from("produtos").delete().eq("id", id);
   if (error) return Response.json({ error: error.message }, { status: 500 });
   return new Response(null, { status: 204 });
 }

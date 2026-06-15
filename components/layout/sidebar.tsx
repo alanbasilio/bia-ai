@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { LogOut, ShoppingBag, Users } from "lucide-react";
+import { LogOut, Package, ShoppingBag, Users } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,7 @@ import { ThemeToggle } from "./theme-toggle";
 const links = [
   { href: "/pedidos", label: "Pedidos", icon: ShoppingBag },
   { href: "/clientes", label: "Clientes", icon: Users },
+  { href: "/produtos", label: "Produtos", icon: Package },
 ];
 
 export function Sidebar() {

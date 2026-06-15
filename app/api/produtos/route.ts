@@ -1,0 +1,37 @@
+import { NextRequest } from "next/server";
+import { getSupabase } from "@/lib/supabase";
+import type { TablesInsert } from "@/lib/database.types";
+
+export const dynamic = "force-dynamic";
+
+export async function GET(request: NextRequest) {
+  const { searchParams } = request.nextUrl;
+  const search = searchParams.get("search") ?? "";
+  const sb = getSupabase();
+
+  let query = sb
+    .from("produtos")
+    .select("*, pedidos(count)")
+    .order("nome", { ascending: true });
+
+  if (search) query = query.ilike("nome", `%${search}%`);
+
+  const { data, error } = await query;
+
+  if (error) return Response.json({ error: error.message }, { status: 500 });
+  return Response.json(data);
+}
+
+export async function POST(request: NextRequest) {
+  const body = (await request.json()) as TablesInsert<"produtos">;
+  const sb = getSupabase();
+
+  const { data, error } = await sb
+    .from("produtos")
+    .insert(body)
+    .select("*, pedidos(count)")
+    .single();
+
+  if (error) return Response.json({ error: error.message }, { status: 500 });
+  return Response.json(data, { status: 201 });
+}

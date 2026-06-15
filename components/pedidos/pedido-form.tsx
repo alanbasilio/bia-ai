@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/select";
 import { DatePickerField } from "@/components/ui/date-picker";
 import { useClientes } from "@/hooks/use-clientes";
+import { useProdutos } from "@/hooks/use-produtos";
 import type { Pedido, PedidoInput } from "@/lib/types";
 
 function maskBRL(raw: string): string {
@@ -43,7 +44,7 @@ function parseBRL(masked: string): number {
 
 const schema = z.object({
   cliente_id: z.string().uuid().nullable(),
-  produto: z.string().min(1, "Produto obrigatório"),
+  produto_id: z.string().min(1, "Selecione um produto"),
   quantidade: z.coerce.number().int().min(1),
   valor: z.coerce.number().min(0),
   status: z.enum(["pago", "pendente", "enviado", "cancelado"]),
@@ -68,12 +69,13 @@ export function PedidoForm({
   isPending,
 }: PedidoFormProps) {
   const { data: clientes = [] } = useClientes();
+  const { data: produtos = [] } = useProdutos();
 
   const form = useForm<FormValues, unknown, FormValues>({
     resolver: zodResolver(schema) as never,
     defaultValues: {
       cliente_id: defaultValues?.cliente_id ?? null,
-      produto: defaultValues?.produto ?? "",
+      produto_id: defaultValues?.produto_id ?? "",
       quantidade: defaultValues?.quantidade ?? 1,
       valor: defaultValues?.valor ?? 0,
       status: defaultValues?.status ?? "pendente",
@@ -122,13 +124,34 @@ export function PedidoForm({
 
         <FormField
           control={form.control}
-          name="produto"
+          name="produto_id"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Produto</FormLabel>
-              <FormControl>
-                <Input placeholder="Ex: Brinco Argola Prata" {...field} />
-              </FormControl>
+              <Select
+                onValueChange={(v) => {
+                  field.onChange(v);
+                  const p = produtos.find((pr) => pr.id === v);
+                  if (p?.preco != null) {
+                    const qty = form.getValues("quantidade");
+                    form.setValue("valor", p.preco * qty);
+                  }
+                }}
+                value={field.value || undefined}
+              >
+                <FormControl>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Selecione um produto" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {produtos.map((p) => (
+                    <SelectItem key={p.id} value={p.id}>
+                      {p.nome}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               <FormMessage />
             </FormItem>
           )}
@@ -145,7 +168,18 @@ export function PedidoForm({
               <FormItem>
                 <FormLabel>Qtd.</FormLabel>
                 <FormControl>
-                  <Input type="number" min={1} {...field} />
+                  <Input
+                    type="number"
+                    min={1}
+                    {...field}
+                    onChange={(e) => {
+                      field.onChange(e);
+                      const qty = Math.max(1, parseInt(e.target.value, 10) || 1);
+                      const pid = form.getValues("produto_id");
+                      const p = produtos.find((pr) => pr.id === pid);
+                      if (p?.preco != null) form.setValue("valor", p.preco * qty);
+                    }}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
