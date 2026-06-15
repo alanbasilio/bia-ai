@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Pencil, Trash2, Plus, Search, Phone } from "lucide-react";
+import Link from "next/link";
+import { Pencil, Trash2, Plus, Search, Phone, ShoppingBag } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -17,14 +18,15 @@ import { ClienteDialog } from "./cliente-dialog";
 import { DeleteClienteDialog } from "./delete-cliente-dialog";
 import { useClientes } from "@/hooks/use-clientes";
 import { PageHeader } from "@/components/layout/page-header";
-import type { Cliente } from "@/lib/types";
+import type { ClienteComContagem } from "@/lib/types";
 
-function getValue(cliente: Cliente, column: string): string {
+function getValue(cliente: ClienteComContagem, column: string): string | number {
   switch (column) {
     case "nome":      return cliente.nome;
     case "instagram": return cliente.instagram ?? "";
     case "whatsapp":  return cliente.whatsapp ?? "";
     case "endereco":  return cliente.endereco ?? "";
+    case "pedidos":   return cliente.pedidos?.[0]?.count ?? 0;
     default:          return "";
   }
 }
@@ -44,9 +46,12 @@ export function ClientesTable() {
     return [...clientes].sort((a, b) => {
       const va = getValue(a, sort.column);
       const vb = getValue(b, sort.column);
-      if (va === "") return 1;
-      if (vb === "") return -1;
-      const cmp = va.localeCompare(vb, "pt-BR");
+      if (va === "" || va == null) return 1;
+      if (vb === "" || vb == null) return -1;
+      const cmp =
+        typeof va === "number" && typeof vb === "number"
+          ? va - vb
+          : String(va).localeCompare(String(vb), "pt-BR");
       return sort.dir === "asc" ? cmp : -cmp;
     });
   }, [clientes, sort]);
@@ -87,27 +92,28 @@ export function ClientesTable() {
               <SortableHead column="whatsapp"  sort={sort} onSort={onSort}>WhatsApp</SortableHead>
               <SortableHead column="endereco"  sort={sort} onSort={onSort}>Endereço</SortableHead>
               <TableHead>Observações</TableHead>
+              <SortableHead column="pedidos"   sort={sort} onSort={onSort} className="text-center">Pedidos</SortableHead>
               <TableHead className="w-[80px]" />
             </TableRow>
           </TableHeader>
           <TableBody>
             {isLoading && (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-10 text-muted-foreground">
+                <TableCell colSpan={7} className="text-center py-10 text-muted-foreground">
                   Carregando...
                 </TableCell>
               </TableRow>
             )}
             {isError && (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-10 text-destructive">
+                <TableCell colSpan={7} className="text-center py-10 text-destructive">
                   Erro ao carregar clientes.
                 </TableCell>
               </TableRow>
             )}
             {!isLoading && sorted.length === 0 && (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-10 text-muted-foreground">
+                <TableCell colSpan={7} className="text-center py-10 text-muted-foreground">
                   Nenhum cliente encontrado.
                 </TableCell>
               </TableRow>
@@ -133,6 +139,22 @@ export function ClientesTable() {
                 </TableCell>
                 <TableCell className="text-sm text-muted-foreground">
                   {cliente.observacoes ?? "—"}
+                </TableCell>
+                <TableCell className="text-center">
+                  {(() => {
+                    const count = cliente.pedidos?.[0]?.count ?? 0;
+                    return count > 0 ? (
+                      <Link
+                        href={`/pedidos?cliente_id=${cliente.id}&cliente_nome=${encodeURIComponent(cliente.nome)}`}
+                        className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
+                      >
+                        <ShoppingBag className="size-3.5" />
+                        {count}
+                      </Link>
+                    ) : (
+                      <span className="text-sm text-muted-foreground">0</span>
+                    );
+                  })()}
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-1">

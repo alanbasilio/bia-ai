@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
 
   let query = sb
     .from("clientes")
-    .select("*")
+    .select("*, pedidos(count)")
     .order("nome", { ascending: true });
 
   if (search) query = query.ilike("nome", `%${search}%`);

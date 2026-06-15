@@ -9,6 +9,7 @@ export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
   const search = searchParams.get("search") ?? "";
   const status = searchParams.get("status") ?? "";
+  const clienteId = searchParams.get("cliente_id") ?? "";
   const sb = getSupabase();
 
   let query = sb
@@ -17,6 +18,7 @@ export async function GET(request: NextRequest) {
     .order("created_at", { ascending: false });
 
   if (status) query = query.eq("status", status as StatusPedido);
+  if (clienteId) query = query.eq("cliente_id", clienteId);
 
   const { data, error } = await query;
 

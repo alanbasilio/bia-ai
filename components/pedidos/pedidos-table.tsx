@@ -1,7 +1,9 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Pencil, Trash2, Plus, Search } from "lucide-react";
+import Link from "next/link";
+import { useSearchParams, useRouter } from "next/navigation";
+import { Pencil, Trash2, Plus, Search, X } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -44,7 +46,11 @@ export function PedidosTable() {
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState<SortState>(null);
   const { handleSort } = useSort();
-  const { data: pedidos = [], isLoading, isError } = usePedidos(search);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const clienteId = searchParams.get("cliente_id") ?? "";
+  const clienteNome = searchParams.get("cliente_nome") ?? "";
+  const { data: pedidos = [], isLoading, isError } = usePedidos(search, clienteId);
 
   function onSort(column: string) {
     setSort((prev) => handleSort(prev, column));
@@ -81,6 +87,21 @@ export function PedidosTable() {
           />
         }
       />
+
+      {clienteId && (
+        <div className="flex items-center gap-2 mb-4 text-sm">
+          <span className="text-muted-foreground">Filtrando por cliente:</span>
+          <span className="font-medium">{clienteNome || clienteId}</span>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="size-6"
+            onClick={() => router.push("/pedidos")}
+          >
+            <X className="size-3.5" />
+          </Button>
+        </div>
+      )}
 
       <div className="relative mb-4 max-w-sm">
         <Search className="absolute left-2.5 top-2.5 size-4 text-muted-foreground" />
@@ -131,7 +152,14 @@ export function PedidosTable() {
             {sorted.map((pedido) => (
               <TableRow key={pedido.id}>
                 <TableCell className="font-medium">
-                  {pedido.clientes?.nome ?? "—"}
+                  {pedido.clientes ? (
+                    <Link
+                      href={`/clientes`}
+                      className="hover:underline text-primary"
+                    >
+                      {pedido.clientes.nome}
+                    </Link>
+                  ) : "—"}
                 </TableCell>
                 <TableCell>{pedido.produto}</TableCell>
                 <TableCell className="text-center">{pedido.quantidade}</TableCell>
