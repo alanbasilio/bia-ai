@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { Pencil, Trash2, Plus, Search, Phone, ShoppingBag } from "lucide-react";
 import {
   Table,
@@ -32,7 +33,8 @@ function getValue(cliente: ClienteComContagem, column: string): string | number 
 }
 
 export function ClientesTable() {
-  const [search, setSearch] = useState("");
+  const searchParams = useSearchParams();
+  const [search, setSearch] = useState(searchParams.get("search") ?? "");
   const [sort, setSort] = useState<SortState>(null);
   const { handleSort } = useSort();
   const { data: clientes = [], isLoading, isError } = useClientes(search);

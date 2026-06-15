@@ -154,7 +154,7 @@ export function PedidosTable() {
                 <TableCell className="font-medium">
                   {pedido.clientes ? (
                     <Link
-                      href={`/clientes`}
+                      href={`/clientes?search=${encodeURIComponent(pedido.clientes.nome)}`}
                       className="hover:underline text-primary"
                     >
                       {pedido.clientes.nome}

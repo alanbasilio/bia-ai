@@ -1,5 +1,10 @@
+import { Suspense } from "react";
 import { ClientesTable } from "@/components/clientes/clientes-table";
 
 export default function ClientesPage() {
-  return <ClientesTable />;
+  return (
+    <Suspense>
+      <ClientesTable />
+    </Suspense>
+  );
 }
