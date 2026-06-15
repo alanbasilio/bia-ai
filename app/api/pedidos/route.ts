@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { getSupabase } from "@/lib/supabase";
-import type { PedidoInput, Indexed, StatusPedido } from "@/lib/types";
+import type { TablesInsert } from "@/lib/database.types";
+import type { StatusPedido } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
@@ -33,7 +34,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const body = (await request.json()) as Indexed<PedidoInput>;
+  const body = (await request.json()) as TablesInsert<"pedidos">;
   const sb = getSupabase();
 
   const { data, error } = await sb
