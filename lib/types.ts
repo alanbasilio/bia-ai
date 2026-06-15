@@ -28,20 +28,28 @@ export interface Pedido {
 export type ClienteInput = Omit<Cliente, "id" | "created_at">;
 export type PedidoInput = Omit<Pedido, "id" | "created_at" | "clientes">;
 
+// Intersection with Record<string, unknown> makes our interfaces satisfy GenericTable.Row
+// which the Supabase typed client requires for type-safe query builders.
+export type Indexed<T> = T & Record<string, unknown>;
+
 export interface Database {
   public: {
     Tables: {
       clientes: {
-        Row: Cliente;
-        Insert: ClienteInput;
-        Update: Partial<ClienteInput>;
+        Row: Indexed<Cliente>;
+        Insert: Indexed<ClienteInput>;
+        Update: Indexed<Partial<ClienteInput>>;
+        Relationships: [];
       };
       pedidos: {
-        Row: Pedido;
-        Insert: PedidoInput;
-        Update: Partial<PedidoInput>;
+        Row: Indexed<Pedido>;
+        Insert: Indexed<PedidoInput>;
+        Update: Indexed<Partial<PedidoInput>>;
+        Relationships: [];
       };
     };
+    Views: { [_ in never]?: never };
+    Functions: { [_ in never]?: never };
     Enums: {
       status_pedido: StatusPedido;
       forma_pagamento: FormaPagamento;

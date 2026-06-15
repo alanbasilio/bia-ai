@@ -1,10 +1,9 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "@/lib/types";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let _client: SupabaseClient<any> | null = null;
+let _client: SupabaseClient<Database> | null = null;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function getSupabase(): SupabaseClient<any> {
+export function getSupabase(): SupabaseClient<Database> {
   if (!_client) {
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const key =
@@ -14,7 +13,7 @@ export function getSupabase(): SupabaseClient<any> {
       throw new Error(
         "NEXT_PUBLIC_SUPABASE_URL ou NEXT_PUBLIC_SUPABASE_ANON_KEY não definidos no .env",
       );
-    _client = createClient(url, key, { auth: { persistSession: false } });
+    _client = createClient<Database>(url, key, { auth: { persistSession: false } });
   }
   return _client;
 }

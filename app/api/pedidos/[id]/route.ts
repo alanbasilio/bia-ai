@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import { getSupabase } from "@/lib/supabase";
-import type { PedidoInput } from "@/lib/types";
+import type { PedidoInput, Indexed } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
@@ -22,12 +22,12 @@ export async function GET(_req: NextRequest, { params }: Params) {
 
 export async function PUT(request: NextRequest, { params }: Params) {
   const { id } = await params;
-  const body: Partial<PedidoInput> = await request.json();
+  const body = (await request.json()) as Indexed<Partial<PedidoInput>>;
   const sb = getSupabase();
 
   const { data, error } = await sb
     .from("pedidos")
-    .update(body as never)
+    .update(body)
     .eq("id", id)
     .select("*, clientes(id, nome)")
     .single();

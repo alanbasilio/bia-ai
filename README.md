@@ -56,6 +56,7 @@ SUPABASE_SERVICE_ROLE_KEY=eyxxxxxxxxxxxxx
 No Supabase Dashboard → **SQL Editor**, cole e execute o conteúdo de [`public/schema-seed.sql`](public/schema-seed.sql).
 
 O script é idempotente e faz:
+
 1. Cria os tipos ENUM (`status_pedido`, `forma_pagamento`)
 2. Cria as tabelas `clientes` e `pedidos`
 3. Desabilita RLS (painel admin sem autenticação)
@@ -143,7 +144,3 @@ npm run build    # Build de produção
 npm run lint     # Biome check
 npm run format   # Biome format
 ```
-
-## Origem dos dados
-
-Os dados foram migrados da planilha `public/bia-sell.xlsx` usando `public/migrar-supabase.py`, que normaliza 6 formatos de data, 5 formatos de valor monetário e 29 variações de status para os 4 valores canônicos do ENUM.

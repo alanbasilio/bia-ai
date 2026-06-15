@@ -15,6 +15,20 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import type { Cliente, ClienteInput } from "@/lib/types";
 
+function maskPhone(raw: string): string {
+  const d = raw.replace(/\D/g, "").slice(0, 11);
+  if (!d) return "";
+  if (d.length <= 2) return `(${d}`;
+  if (d.length <= 7) return `(${d.slice(0, 2)}) ${d.slice(2)}`;
+  return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
+}
+
+function maskInstagram(raw: string): string {
+  const stripped = raw.startsWith("@") ? raw.slice(1) : raw;
+  const clean = stripped.replace(/[^a-zA-Z0-9._]/g, "").slice(0, 30);
+  return clean ? `@${clean}` : "";
+}
+
 const nullableStr = z
   .string()
   .transform((v) => v.trim() || null)
@@ -81,8 +95,11 @@ export function ClienteForm({
               <FormControl>
                 <Input
                   placeholder="@usuario"
-                  {...field}
                   value={field.value ?? ""}
+                  onChange={(e) => field.onChange(maskInstagram(e.target.value))}
+                  onBlur={field.onBlur}
+                  name={field.name}
+                  ref={field.ref}
                 />
               </FormControl>
               <FormMessage />
@@ -99,8 +116,12 @@ export function ClienteForm({
               <FormControl>
                 <Input
                   placeholder="(81) 99999-9999"
-                  {...field}
+                  inputMode="numeric"
                   value={field.value ?? ""}
+                  onChange={(e) => field.onChange(maskPhone(e.target.value))}
+                  onBlur={field.onBlur}
+                  name={field.name}
+                  ref={field.ref}
                 />
               </FormControl>
               <FormMessage />

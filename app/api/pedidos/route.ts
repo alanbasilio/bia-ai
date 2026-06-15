@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import { getSupabase } from "@/lib/supabase";
-import type { PedidoInput } from "@/lib/types";
+import type { PedidoInput, Indexed, StatusPedido } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
     .select("*, clientes(id, nome)")
     .order("created_at", { ascending: false });
 
-  if (status) query = query.eq("status", status);
+  if (status) query = query.eq("status", status as StatusPedido);
 
   const { data, error } = await query;
 
@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
 
   const result = search
     ? data.filter(
-        (p: { produto: string; clientes?: { nome: string } | null }) =>
+        (p) =>
           p.produto.toLowerCase().includes(search.toLowerCase()) ||
           p.clientes?.nome?.toLowerCase().includes(search.toLowerCase()),
       )
@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const body: PedidoInput = await request.json();
+  const body = (await request.json()) as Indexed<PedidoInput>;
   const sb = getSupabase();
 
   const { data, error } = await sb

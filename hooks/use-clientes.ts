@@ -11,7 +11,7 @@ async function fetchClientes(search: string): Promise<Cliente[]> {
   if (search) params.set("search", search);
   const res = await fetch(`/api/clientes?${params}`);
   if (!res.ok) throw new Error("Erro ao buscar clientes");
-  return res.json();
+  return res.json() as Promise<Cliente[]>;
 }
 
 export function useClientes(search = "") {
@@ -31,7 +31,7 @@ export function useCreateCliente() {
         body: JSON.stringify(input),
       });
       if (!res.ok) {
-        const { error } = await res.json();
+        const { error } = (await res.json()) as { error: string };
         throw new Error(error ?? "Erro ao criar cliente");
       }
       return res.json() as Promise<Cliente>;
@@ -57,7 +57,7 @@ export function useUpdateCliente() {
         body: JSON.stringify(input),
       });
       if (!res.ok) {
-        const { error } = await res.json();
+        const { error } = (await res.json()) as { error: string };
         throw new Error(error ?? "Erro ao atualizar cliente");
       }
       return res.json() as Promise<Cliente>;
@@ -75,7 +75,10 @@ export function useDeleteCliente() {
   return useMutation({
     mutationFn: async (id: string) => {
       const res = await fetch(`/api/clientes/${id}`, { method: "DELETE" });
-      if (!res.ok) throw new Error("Erro ao excluir cliente");
+      if (!res.ok) {
+        const { error } = (await res.json()) as { error: string };
+        throw new Error(error ?? "Erro ao excluir cliente");
+      }
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: [CLIENTES_KEY] });

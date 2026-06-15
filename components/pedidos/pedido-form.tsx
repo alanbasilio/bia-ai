@@ -20,6 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { DatePickerField } from "@/components/ui/date-picker";
 import { useClientes } from "@/hooks/use-clientes";
 import type { Pedido, PedidoInput } from "@/lib/types";
 
@@ -175,7 +176,10 @@ export function PedidoForm({
               <FormItem>
                 <FormLabel>Data</FormLabel>
                 <FormControl>
-                  <Input type="date" {...field} />
+                  <DatePickerField
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

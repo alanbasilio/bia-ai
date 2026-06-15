@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import { getSupabase } from "@/lib/supabase";
-import type { ClienteInput } from "@/lib/types";
+import type { ClienteInput, Indexed } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const body: ClienteInput = await request.json();
+  const body = (await request.json()) as Indexed<ClienteInput>;
   const sb = getSupabase();
 
   const { data, error } = await sb
