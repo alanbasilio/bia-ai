@@ -37,7 +37,7 @@ export function ClientesTable() {
   const router = useRouter();
   const clienteId = searchParams.get("cliente_id") ?? "";
   const [search, setSearch] = useState("");
-  const [sort, setSort] = useState<SortState>(null);
+  const [sort, setSort] = useState<SortState>({ column: "nome", dir: "asc" });
   const { handleSort } = useSort();
   const { data: clientes = [], isLoading, isError } = useClientes(search, clienteId);
 

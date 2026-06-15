@@ -44,7 +44,7 @@ function getValue(pedido: Pedido, column: string): string | number {
 
 export function PedidosTable() {
   const [search, setSearch] = useState("");
-  const [sort, setSort] = useState<SortState>(null);
+  const [sort, setSort] = useState<SortState>({ column: "data", dir: "desc" });
   const { handleSort } = useSort();
   const searchParams = useSearchParams();
   const router = useRouter();

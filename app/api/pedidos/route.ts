@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
   let query = sb
     .from("pedidos")
     .select("*, clientes(id, nome)")
-    .order("created_at", { ascending: false });
+    .order("data_pedido", { ascending: false });
 
   if (status) query = query.eq("status", status as StatusPedido);
   if (clienteId) query = query.eq("cliente_id", clienteId);
