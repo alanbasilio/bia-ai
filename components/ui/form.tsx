@@ -80,7 +80,11 @@ function FormLabel({
   const { error, formItemId } = useFormField();
   return (
     <Label
-      className={cn(error && "text-destructive", className)}
+      className={cn(
+        "text-[10px] font-medium tracking-widest uppercase",
+        error ? "text-destructive" : "text-muted-foreground",
+        className,
+      )}
       htmlFor={formItemId}
       {...props}
     />

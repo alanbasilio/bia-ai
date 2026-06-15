@@ -39,7 +39,7 @@ export function ClienteDialog({ cliente, trigger }: ClienteDialogProps) {
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>
+          <DialogTitle className="font-heading text-xl font-semibold tracking-wide">
             {cliente ? "Editar Cliente" : "Novo Cliente"}
           </DialogTitle>
         </DialogHeader>

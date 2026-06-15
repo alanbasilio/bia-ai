@@ -71,7 +71,7 @@ export function ClienteForm({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit((v) => onSubmit(v as ClienteInput))}
-        className="space-y-4"
+        className="space-y-5"
       >
         <FormField
           control={form.control}
@@ -87,48 +87,54 @@ export function ClienteForm({
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="instagram"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Instagram</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="@usuario"
-                  value={field.value ?? ""}
-                  onChange={(e) => field.onChange(maskInstagram(e.target.value))}
-                  onBlur={field.onBlur}
-                  name={field.name}
-                  ref={field.ref}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="whatsapp"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>WhatsApp</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="(81) 99999-9999"
-                  inputMode="numeric"
-                  value={field.value ?? ""}
-                  onChange={(e) => field.onChange(maskPhone(e.target.value))}
-                  onBlur={field.onBlur}
-                  name={field.name}
-                  ref={field.ref}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        {/* Instagram (1/2) + WhatsApp (1/2) */}
+        <div className="grid grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="instagram"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Instagram</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="@usuario"
+                    value={field.value ?? ""}
+                    onChange={(e) =>
+                      field.onChange(maskInstagram(e.target.value))
+                    }
+                    onBlur={field.onBlur}
+                    name={field.name}
+                    ref={field.ref}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="whatsapp"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>WhatsApp</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="(81) 99999-9999"
+                    inputMode="numeric"
+                    value={field.value ?? ""}
+                    onChange={(e) =>
+                      field.onChange(maskPhone(e.target.value))
+                    }
+                    onBlur={field.onBlur}
+                    name={field.name}
+                    ref={field.ref}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
         <FormField
           control={form.control}
@@ -167,7 +173,7 @@ export function ClienteForm({
           )}
         />
 
-        <Button type="submit" className="w-full" disabled={isPending}>
+        <Button type="submit" className="w-full h-9" disabled={isPending}>
           {isPending ? "Salvando..." : "Salvar"}
         </Button>
       </form>

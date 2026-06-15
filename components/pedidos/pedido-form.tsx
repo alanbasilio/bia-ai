@@ -88,8 +88,9 @@ export function PedidoForm({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit((v) => onSubmit(v as PedidoInput))}
-        className="space-y-4"
+        className="space-y-5"
       >
+        {/* Identificação */}
         <FormField
           control={form.control}
           name="cliente_id"
@@ -101,7 +102,7 @@ export function PedidoForm({
                 value={field.value ?? "_none"}
               >
                 <FormControl>
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue placeholder="Selecione um cliente" />
                   </SelectTrigger>
                 </FormControl>
@@ -133,13 +134,16 @@ export function PedidoForm({
           )}
         />
 
-        <div className="grid grid-cols-2 gap-4">
+        <hr className="border-border" />
+
+        {/* Qtd (1/3) + Valor (2/3) */}
+        <div className="grid grid-cols-3 gap-4">
           <FormField
             control={form.control}
             name="quantidade"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Quantidade</FormLabel>
+                <FormLabel>Qtd.</FormLabel>
                 <FormControl>
                   <Input type="number" min={1} {...field} />
                 </FormControl>
@@ -147,26 +151,31 @@ export function PedidoForm({
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="valor"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Valor</FormLabel>
-                <FormControl>
-                  <Input
-                    inputMode="numeric"
-                    placeholder="R$ 0,00"
-                    value={maskBRL(String(Math.round((field.value as number) * 100)))}
-                    onChange={(e) => field.onChange(parseBRL(e.target.value))}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className="col-span-2">
+            <FormField
+              control={form.control}
+              name="valor"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Valor</FormLabel>
+                  <FormControl>
+                    <Input
+                      inputMode="numeric"
+                      placeholder="R$ 0,00"
+                      value={maskBRL(
+                        String(Math.round((field.value as number) * 100)),
+                      )}
+                      onChange={(e) => field.onChange(parseBRL(e.target.value))}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
         </div>
 
+        {/* Status (1/2) + Data (1/2) */}
         <div className="grid grid-cols-2 gap-4">
           <FormField
             control={form.control}
@@ -176,7 +185,7 @@ export function PedidoForm({
                 <FormLabel>Status</FormLabel>
                 <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
-                    <SelectTrigger>
+                    <SelectTrigger className="w-full">
                       <SelectValue />
                     </SelectTrigger>
                   </FormControl>
@@ -209,6 +218,7 @@ export function PedidoForm({
           />
         </div>
 
+        {/* Forma de pagamento */}
         <FormField
           control={form.control}
           name="forma_pagamento"
@@ -220,7 +230,7 @@ export function PedidoForm({
                 value={field.value ?? "_none"}
               >
                 <FormControl>
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue placeholder="Selecione" />
                   </SelectTrigger>
                 </FormControl>
@@ -237,6 +247,9 @@ export function PedidoForm({
           )}
         />
 
+        <hr className="border-border" />
+
+        {/* Observações */}
         <FormField
           control={form.control}
           name="observacoes"
@@ -256,7 +269,7 @@ export function PedidoForm({
           )}
         />
 
-        <Button type="submit" className="w-full" disabled={isPending}>
+        <Button type="submit" className="w-full h-9" disabled={isPending}>
           {isPending ? "Salvando..." : "Salvar"}
         </Button>
       </form>

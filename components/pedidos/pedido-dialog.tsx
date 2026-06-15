@@ -39,7 +39,9 @@ export function PedidoDialog({ pedido, trigger }: PedidoDialogProps) {
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{pedido ? "Editar Pedido" : "Novo Pedido"}</DialogTitle>
+          <DialogTitle className="font-heading text-xl font-semibold tracking-wide">
+            {pedido ? "Editar Pedido" : "Novo Pedido"}
+          </DialogTitle>
         </DialogHeader>
         <PedidoForm
           defaultValues={pedido}
